@@ -1,0 +1,39 @@
+{
+    "idf.adapterTargetName": "esp32",
+    "idf.portWin": "COM8",
+    "idf.openOcdConfigs": [
+        "interface/ftdi/esp32_devkitj_v1.cfg",
+        "target/esp32.cfg"
+    ],
+    "idf.flashType": "UART",
+    "files.associations": {
+        "stdio.h": "c",
+        "storage_module.h": "c",
+        "config.h": "c",
+        "stdbool.h": "c",
+        "mqtt_module.h": "c",
+        "type_traits": "c",
+        "string.h": "c",
+        "stdint.h": "c",
+        "sdkconfig.h": "c",
+        "array": "c",
+        "deque": "c",
+        "list": "c",
+        "string": "c",
+        "unordered_map": "c",
+        "vector": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "regex": "c",
+        "freertos.h": "c",
+        "task.h": "c",
+        "gpio_periph.h": "c",
+        "lldesc.h": "c",
+        "gpio_types.h": "c",
+        "typeinfo": "cpp"
+    },
+    "C_Cpp.intelliSenseEngineFallback": "Disabled",
+    "C_Cpp.errorSquiggles": "Disabled",
+    "clang-format.executable": "D:/LLVM/bin/clang-format.exe",
+    "cmake.configureOnOpen": false
+}
