@@ -1,4 +1,4 @@
-20523763717072613
+20530434242887309
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -61537,6 +61537,27 @@ BORNIER_2P
 2
 2
 PANEL_LED
+Capa1000uF
+
+
+0
+2
+2
+PANEL_LED
+HN1x10
+
+
+0
+10
+10
+PANEL_LED
+HN1x20
+
+
+0
+20
+20
+PANEL_LED
 LMR51430
 
 
@@ -61557,6 +61578,13 @@ Pannel connector
 0
 12
 12
+PANEL_LED
+SOIC-20
+
+
+0
+20
+20
 Package_BGA
 Analog_BGA-28_4.0x6.25mm_Layout4x7_P0.8mm_Ball0.45mm_Pad0.4
 Analog BGA-28 4.0mm x 6.25mm package, pitch 0.4mm pad, based on https://www.analog.com/media/en/technical-documentation/data-sheets/8063fa.pdf
