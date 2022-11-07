@@ -1,4 +1,4 @@
-20530434333501014
+20532101904431496
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -61552,6 +61552,13 @@ HN1x10
 10
 PANEL_LED
 HN1x20
+
+
+0
+20
+20
+PANEL_LED
+HN1x20Olimex
 
 
 0

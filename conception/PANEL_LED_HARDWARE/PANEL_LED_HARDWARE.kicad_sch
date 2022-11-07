@@ -1471,6 +1471,10 @@
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 79077725-a83a-4254-a063-7563e757f380)
   )
+  (wire (pts (xy 127 137.16) (xy 127 140.97))
+    (stroke (width 0) (type default) (color 0 0 0 0))
+    (uuid 79437f97-5a19-43c5-9f90-f6413fddc406)
+  )
   (wire (pts (xy 97.79 88.9) (xy 100.33 88.9))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid 7adbc930-680f-42f2-8aa7-a4e6e9040c41)
@@ -1595,10 +1599,6 @@
   (wire (pts (xy 165.1 64.77) (xy 161.29 64.77))
     (stroke (width 0) (type default) (color 0 0 0 0))
     (uuid a938ade8-4be2-45aa-8bcc-fb1979000693)
-  )
-  (wire (pts (xy 127 140.97) (xy 127 139.7))
-    (stroke (width 0) (type default) (color 0 0 0 0))
-    (uuid a9b9e86a-0ced-4c6c-ab93-9011639b5c5c)
   )
   (wire (pts (xy 25.4 153.67) (xy 43.18 153.67))
     (stroke (width 0) (type default) (color 0 0 0 0))
@@ -2125,6 +2125,22 @@
     (pin "1" (uuid 3901ea42-8835-4242-9a98-5d525a9822d4))
   )
 
+  (symbol (lib_id "ESP32-EVB_Rev_H:+3.3V") (at 127 137.16 0) (unit 1)
+    (in_bom yes) (on_board yes)
+    (uuid 1a49a86d-39d3-4f05-ad49-ecda7f9b6266)
+    (property "Reference" "#PWR?" (id 0) (at 127 140.97 0)
+      (effects (font (size 1.27 1.27)) hide)
+    )
+    (property "Value" "+3.3V" (id 1) (at 127 133.35 0))
+    (property "Footprint" "" (id 2) (at 127 137.16 0)
+      (effects (font (size 1.524 1.524)))
+    )
+    (property "Datasheet" "" (id 3) (at 127 137.16 0)
+      (effects (font (size 1.524 1.524)))
+    )
+    (pin "1" (uuid 1c2bb1df-21fb-4ad8-8363-65fcb7fc4ca8))
+  )
+
   (symbol (lib_id "ESP32-EVB_Rev_H:GND") (at 236.22 87.63 270) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 1b57a894-5011-43e7-ab13-156e4964a1a9)
@@ -2332,22 +2348,6 @@
     (pin "2" (uuid e089dcbd-0914-4016-a6ce-52c33473dd66))
   )
 
-  (symbol (lib_id "ESP32-EVB_Rev_H:+5V") (at 127 139.7 0) (unit 1)
-    (in_bom yes) (on_board yes)
-    (uuid 36c7b18e-1842-4005-a89c-b35b0df498c2)
-    (property "Reference" "#PWR0105" (id 0) (at 127 143.51 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "+5V" (id 1) (at 127 136.144 0))
-    (property "Footprint" "" (id 2) (at 127 139.7 0)
-      (effects (font (size 1.524 1.524)))
-    )
-    (property "Datasheet" "" (id 3) (at 127 139.7 0)
-      (effects (font (size 1.524 1.524)))
-    )
-    (pin "1" (uuid 0a5740d3-6e32-4322-a9de-72bbfa13435c))
-  )
-
   (symbol (lib_id "ESP32-EVB_Rev_H:C") (at 53.34 91.44 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 389a7b54-5aa5-45f3-824d-68f7cff5a106)
@@ -2488,7 +2488,7 @@
   (symbol (lib_id "ESP32-EVB_Rev_H:GND") (at 172.72 36.83 0) (unit 1)
     (in_bom yes) (on_board yes)
     (uuid 5c0b7a0f-1e68-48d4-aa45-7d4cde909c71)
-    (property "Reference" "#PWR?" (id 0) (at 172.72 43.18 0)
+    (property "Reference" "#PWR0115" (id 0) (at 172.72 43.18 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "GND" (id 1) (at 172.72 41.91 90))
@@ -2795,7 +2795,7 @@
   (symbol (lib_id "power:PWR_FLAG") (at 172.72 33.02 0) (unit 1)
     (in_bom yes) (on_board yes) (fields_autoplaced)
     (uuid de7a83df-dcb9-4bfe-aa9f-88276564bcf2)
-    (property "Reference" "#FLG?" (id 0) (at 172.72 31.115 0)
+    (property "Reference" "#FLG0101" (id 0) (at 172.72 31.115 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Value" "PWR_FLAG" (id 1) (at 172.72 27.94 0))
@@ -2914,7 +2914,7 @@
 
   (symbol_instances
     (path "/de7a83df-dcb9-4bfe-aa9f-88276564bcf2"
-      (reference "#FLG?") (unit 1) (value "PWR_FLAG") (footprint "")
+      (reference "#FLG0101") (unit 1) (value "PWR_FLAG") (footprint "")
     )
     (path "/01eb61d8-64fa-4060-813f-e234fb2636f1"
       (reference "#PWR0101") (unit 1) (value "GND") (footprint "")
@@ -2927,9 +2927,6 @@
     )
     (path "/a78f52ef-f2e7-430f-92fd-354f9c8cd775"
       (reference "#PWR0104") (unit 1) (value "GND") (footprint "")
-    )
-    (path "/36c7b18e-1842-4005-a89c-b35b0df498c2"
-      (reference "#PWR0105") (unit 1) (value "+5V") (footprint "")
     )
     (path "/c992e090-d727-4990-89c2-1e519c88d6b7"
       (reference "#PWR0106") (unit 1) (value "+5V") (footprint "")
@@ -2959,7 +2956,10 @@
       (reference "#PWR0114") (unit 1) (value "GND") (footprint "")
     )
     (path "/5c0b7a0f-1e68-48d4-aa45-7d4cde909c71"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+      (reference "#PWR0115") (unit 1) (value "GND") (footprint "")
+    )
+    (path "/1a49a86d-39d3-4f05-ad49-ecda7f9b6266"
+      (reference "#PWR?") (unit 1) (value "+3.3V") (footprint "")
     )
     (path "/43a7163f-359f-4007-9c7e-d2d315915827"
       (reference "C1") (unit 1) (value "2.2uF") (footprint "Capacitor_SMD:C_0603_1608Metric")
