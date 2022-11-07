@@ -7,7 +7,6 @@
  */
 /*      INCLUDES     */
 #include <Arduino.h>
-// #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "logo.h"
@@ -84,7 +83,7 @@ void display_logo()
             color.red=(uint8_t) LOGO_PIXELS[3 * y * 160 + 3 * x + 2];
             color.green=(uint8_t) LOGO_PIXELS[3 * y * 160 + 3 * x + 1];
             color.blue=(uint8_t) LOGO_PIXELS[3 * y * 160 + 3 * x];
-            numberLayer.drawPixel(x,15-y,color);
+            numberLayer.drawPixel(x,y,color);
         }
     }
     numberLayer.swapBuffers(true);
@@ -97,20 +96,6 @@ void display_logo()
  */
 void config_panel()
 {
-    // HUB75_I2S_CFG mxconfig(PANEL_RES_X, PANEL_RES_Y, PANEL_CHAIN);
-    // HUB75_I2S_CFG::i2s_pins _pins = {R1, G1, BL1, R2, G2, BL2, CH_A, CH_B, CH_C, CH_D, CH_E, LAT, OE, CLK};
-    // mxconfig.gpio = _pins;
-    // dma_display = new MatrixPanel_I2S_DMA(mxconfig);
-    // dma_display->begin();
-    // dma_display->setBrightness8(255);
-    // dma_display->clearScreen();
-    // dma_display->fillScreen(dma_display->color444(0, 1, 0));
-    // delay(2000);
-    // dma_display->clearScreen();
-    // delay(2000);
-    // display_logo();
-    // dma_display->clearScreen();
-    // dma_display->drawChar
     matrix.setRotation(rotation180);                       // Matrix-Ausrichtung festlegen
     matrix.setBrightness(defaultBrightness);               // Matrix-Helligkeit übertragen
     scrollingLayer.setOffsetFromTop(defaultScrollOffset);  // Text-Abstand gegenüber Oberkannte festlegen
@@ -199,54 +184,4 @@ void Display_Task(void *arg)
     {
         // display_logo();
     }
-}
-
-void test()
-{
-  matrix.addLayer(&numberLayer);
-  matrix.addLayer(&scrollingLayer1); 
-  matrix.addLayer(&scrollingLayer2); 
-  matrix.addLayer(&scrollingLayer3); 
-  matrix.addLayer(&scrollingLayer4); 
-  matrix.addLayer(&scrollingLayer5);
-  matrix.begin();
-
-  scrollingLayer1.setMode(wrapForward);
-  scrollingLayer2.setMode(bounceForward);
-  scrollingLayer3.setMode(bounceReverse);
-  scrollingLayer4.setMode(wrapForward);
-  scrollingLayer5.setMode(bounceForward);
-
-  scrollingLayer1.setColor({0xff, 0xff, 0xff});
-  scrollingLayer2.setColor({0xff, 0x00, 0xff});
-  scrollingLayer3.setColor({0xff, 0xff, 0x00});
-  scrollingLayer4.setColor({0x00, 0x00, 0xff});
-  scrollingLayer5.setColor({0xff, 0x00, 0x00});
-
-  scrollingLayer1.setSpeed(10);
-  scrollingLayer2.setSpeed(20);
-  scrollingLayer3.setSpeed(40);
-  scrollingLayer4.setSpeed(80);
-  scrollingLayer5.setSpeed(120);
-
-  scrollingLayer1.setFont(gohufont11b);
-  scrollingLayer2.setFont(gohufont11);
-  scrollingLayer3.setFont(font8x13);
-  scrollingLayer4.setFont(font6x10);
-  scrollingLayer5.setFont(font5x7);
-
-  scrollingLayer4.setRotation(rotation270);
-  scrollingLayer5.setRotation(rotation90);
-
-  scrollingLayer1.setOffsetFromTop((kMatrixHeight/2) - 5);
-  scrollingLayer2.setOffsetFromTop((kMatrixHeight/4) - 5);
-  scrollingLayer3.setOffsetFromTop((kMatrixHeight/2 + kMatrixHeight/4) - 5);
-  scrollingLayer4.setOffsetFromTop((kMatrixWidth/2 + kMatrixWidth/4) - 5);
-  scrollingLayer5.setOffsetFromTop((kMatrixWidth/2 + kMatrixWidth/4) - 5);
-
-  scrollingLayer1.start("Layer 1", -1);
-  scrollingLayer2.start("Layer 2", -1);
-  scrollingLayer3.start("Layer 3", -1);
-  scrollingLayer4.start("Layer 4", -1);
-  scrollingLayer5.start("Layer 5", -1);
 }

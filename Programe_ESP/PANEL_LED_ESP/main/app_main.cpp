@@ -35,8 +35,7 @@ extern "C" void app_main(void)
     // config peripherals
     uart_init_config();
     storage_init();
-    //ethernet_init();
-    // test();
+    // ethernet_init();
     MQTT_init();
     config_panel();
     // Task creation
