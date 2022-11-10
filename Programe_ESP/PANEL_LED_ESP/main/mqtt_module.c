@@ -61,18 +61,9 @@
 #endif
 static EventGroupHandle_t xMQTTRecieveEventBits;
 EventGroupHandle_t xEvent_data_COM;
-QueueHandle_t xQueue_data_LED_COM;    //!< FreeRTOS queue to ask the led task to activate a specific led or a group of
-                                      //!< leds (from an command that come from the mqtt brocker)
-QueueHandle_t xQueue_data_Button_COM; //!< FreeRTOS queue to ask the communication task to send the value of the
-                                      //!< buttons to the broker
-QueueHandle_t xQueue_data_Potentimeter_COM; //!< FreeRTOS queue to ask the communication task to send the value of
-                                            //!< the potentiometer to the broker
-// static char topic_button[MAX_STR_SIZE];
-// static char topic_led[MAX_STR_SIZE];
-// static char topic_potentiometer[MAX_STR_SIZE];
-#define topic_potentiometer "topic/potentiometer"
-#define topic_button "topic/buttons"
-#define topic_led "topic/leds"
+QueueHandle_t xQueue_data_LED_COM;
+// static char topic_led_error[MAX_STR_SIZE];
+#define TOPIC_LED_ERROR "topic/leds_error"
 static const char *TAG = "MQTT_EXAMPLE";
 /**
  *  @fn static void log_error_if_nonzero(const char *message, int error_code)
@@ -162,19 +153,13 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                 printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
                 printf("DATA=%.*s\r\n", event->data_len, event->data);
 #endif
-                int temp = 0;
-                for(int u = 0; u < (event->data_len); u++)
+                printf("test %d \n", strlen(event->data));
+                if(strlen(event->data) <= (MAX_STR_SIZE_MSG + COLOR_SIZE + ERROR_NUMBER_SIZE + 1))
                 {
-                    temp = temp * 10 + (event->data[u] - 48);
+                    char message[MAX_STR_SIZE_MSG + COLOR_SIZE + ERROR_NUMBER_SIZE + 1] = "";
+                    strncpy(message, event->data, strlen(event->data));
+                    xQueueSend(xQueue_data_LED_COM, &message, (TickType_t) 0);
                 }
-#if DEBUG
-                printf("DATA_Byte=%d\n", temp);
-#endif
-                uint8_t a = (uint8_t) temp;
-                xQueueSend(xQueue_data_LED_COM, &a, (TickType_t) 0);
-                xEventGroupSetBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                                   DATA_FLAG);            /* The bits being set. */
-                xEventGroupSetBits(xEvent_data_COM, RECEIVE_LED_FLAG);
             }
             break;
         case MQTT_EVENT_ERROR :
@@ -269,7 +254,7 @@ void MQTT_Task(void *arg)
      *-----------------------------------------------------------------------------------------------------------------------------------*/
     do
     {
-        int msg_id = esp_mqtt_client_subscribe(client, topic_led, 2);
+        int msg_id = esp_mqtt_client_subscribe(client, TOPIC_LED_ERROR, 2);
 #if DEBUG
         ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 #endif
@@ -306,7 +291,7 @@ void MQTT_Task(void *arg)
             com_flags2 = 0;
             do
             {
-                int msg_id = esp_mqtt_client_subscribe(client, topic_led, 2);
+                int msg_id = esp_mqtt_client_subscribe(client, TOPIC_LED_ERROR, 2);
 #if DEBUG
                 ESP_LOGI(TAG, "sent resubscribe successful, msg_id=%d", msg_id);
 #endif
@@ -314,60 +299,8 @@ void MQTT_Task(void *arg)
                     xEventGroupWaitBits(xMQTTRecieveEventBits, SUSCRIBED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(200));
             } while((com_flags2 & SUSCRIBED_FLAG) != SUSCRIBED_FLAG);
         }
-        /*---------------------------------------------------------------------------------------------------------------------------------
-         * Publish to the button topic or potentiometer topic if connected to broker
-         *-----------------------------------------------------------------------------------------------------------------------------------*/
-        if((com_flags & CONECTED_FLAG) == CONECTED_FLAG)
-        { // if connected
-            i = 0;
-            flag_internal = xEventGroupWaitBits(xEvent_data_COM, SEND_POTENTIOMETRE_FLAG | SEND_BUTTON_FLAG, pdTRUE,
-                                                pdFALSE, pdMS_TO_TICKS(100));
-            if((flag_internal & SEND_BUTTON_FLAG) == SEND_BUTTON_FLAG)
-            { // if qu ricieve button
-                /*-----------------------------------------------------------------------------------------------
-                 * Publish to the button topic
-                 *----------------------------------------------------------------------------------------------*/
-                i = 0;
-                que_return_recieve1 = xQueueReceive(xQueue_data_Button_COM, &i, pdMS_TO_TICKS(20));
-                if(que_return_recieve1 == pdTRUE)
-                { // if queue ricieve button
-                    do
-                    {
-                        com_flags3 = 0;
-                        sprintf(str, "%d", i);
-                        esp_mqtt_client_publish(client, topic_button, str, 0, 1, 0);
-#if DEBUG
-                        ESP_LOGI(TAG, "publisch data");
-#endif
-                        com_flags3 = xEventGroupWaitBits(xMQTTRecieveEventBits, PUBLISHED_FLAG, pdTRUE, pdFALSE,
-                                                         pdMS_TO_TICKS(200));
-                    } while((com_flags3 & PUBLISHED_FLAG) != PUBLISHED_FLAG);
-                } // end if queue ricieve button
-            }     // end if flag  button
-            else if((flag_internal & SEND_POTENTIOMETRE_FLAG) == SEND_POTENTIOMETRE_FLAG)
-            { // if flag  pottentiommeter
-                /*-----------------------------------------------------------------------------------------------
-                 * Publish to the potentiometer topic
-                 *----------------------------------------------------------------------------------------------*/
-                i = 0;
-                que_return_recieve2 = xQueueReceive(xQueue_data_Potentimeter_COM, &i, pdMS_TO_TICKS(20));
-                if(que_return_recieve2 == pdTRUE)
-                { // if queue ricieve potentiometer
-                    do
-                    {
-                        com_flags3 = 0;
-                        sprintf(str, "%d", i);
-                        esp_mqtt_client_publish(client, topic_potentiometer, str, 0, 1, 0);
-#if DEBUG
-                        ESP_LOGI(TAG, "publisch data");
-#endif
-                        com_flags3 = xEventGroupWaitBits(xMQTTRecieveEventBits, PUBLISHED_FLAG, pdTRUE, pdFALSE,
-                                                         pdMS_TO_TICKS(200));
-                    } while((com_flags3 & PUBLISHED_FLAG) != PUBLISHED_FLAG);
-                } // end if queue ricieve potentiometer
-            }     // end if flag  pottentiommeter
-        }         // end if connected
-    }             // endtask loop
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    } // endtask loop
 } // end TASK
 /**
  * @fn void MQTT_init()
@@ -393,9 +326,7 @@ void MQTT_init()
 #endif
     xMQTTRecieveEventBits = xEventGroupCreate();
     xEvent_data_COM = xEventGroupCreate();
-    xQueue_data_LED_COM = xQueueCreate(20, sizeof(uint8_t));
-    xQueue_data_Button_COM = xQueueCreate(20, sizeof(uint8_t));
-    xQueue_data_Potentimeter_COM = xQueueCreate(20, sizeof(uint8_t));
+    xQueue_data_LED_COM = xQueueCreate(20, sizeof(char[MAX_STR_SIZE_MSG + COLOR_SIZE + ERROR_NUMBER_SIZE + 1]));
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
