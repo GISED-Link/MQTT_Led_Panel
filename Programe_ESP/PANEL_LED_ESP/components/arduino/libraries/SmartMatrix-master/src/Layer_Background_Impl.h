@@ -22,7 +22,7 @@
  */
 
 #include <stdlib.h>     
-
+static const char *TAG1 = "BLOCK_EXAMPLE";
 // call when backgroundBuffers and backgroundColorCorrectionLUT buffer is allocated outside of class
 template <typename RGB, unsigned int optionFlags>
 SMLayerBackground<RGB, optionFlags>::SMLayerBackground(RGB * buffer, uint16_t width, uint16_t height, color_chan_t * colorCorrectionLUT) {
@@ -959,7 +959,6 @@ void SMLayerBackground<RGB, optionFlags>::handleBufferSwap(void) {
         return;
 
     unsigned char newDrawBuffer = currentRefreshBuffer;
-
     currentRefreshBuffer = currentDrawBuffer;
     currentDrawBuffer = newDrawBuffer;
 
@@ -974,21 +973,39 @@ void SMLayerBackground<RGB, optionFlags>::handleBufferSwap(void) {
 template <typename RGB, unsigned int optionFlags>
 void SMLayerBackground<RGB, optionFlags>::swapBuffers(bool copy) {
     while (swapPending);
-
     swapPending = true;
 
     if (copy) {
         while (swapPending);
-#if 1
+#if 1   
         // workaround for bizarre (optimization) bug - currentDrawBuffer and currentRefreshBuffer are volatile and are changed by an ISR while we're waiting for swapPending here.  They can't be used as parameters to memcpy directly though.  
         if(currentDrawBuffer)
+        {
             //  memcpy(backgroundBuffers[1], backgroundBuffers[0], sizeof(RGB) * (this->matrixWidth * this->matrixHeight));
             std::copy(backgroundBuffers[0], backgroundBuffers[0] + (this->matrixWidth * this->matrixHeight), backgroundBuffers[1]);
-            //for(int i=0;i<(this->matrixWidth * this->matrixHeight);i++)backgroundBuffers[1][i]=backgroundBuffers[0][i]; //memset bug
+            // for(int i=0;i<(this->matrixWidth * this->matrixHeight);i++)
+            // {
+            //     backgroundBuffers[1][i]=backgroundBuffers[0][i]; //memset bug
+            //     ESP_LOGI(TAG1,"i %d",i);
+            //     if(i==100)
+            //     {
+            //         vTaskDelay(pdMS_TO_TICKS(100));
+            //     }
+            // }
+        }
         else
+        {
             //memcpy(backgroundBuffers[0], backgroundBuffers[1], sizeof(RGB) * (this->matrixWidth * this->matrixHeight));
-            //for(int i=0;i<(this->matrixWidth * this->matrixHeight);i++)backgroundBuffers[1][i]=backgroundBuffers[0][i];
+            // for(int i=0;i<(this->matrixWidth * this->matrixHeight);i++)
+            // {
+            //     backgroundBuffers[1][i]=backgroundBuffers[0][i]; //memset bug
+            //     if(i==100)
+            //     {
+            //         vTaskDelay(pdMS_TO_TICKS(100));
+            //     }
+            // }
             std::copy(backgroundBuffers[1], backgroundBuffers[1] + (this->matrixWidth * this->matrixHeight), backgroundBuffers[0]);
+        }
 #else
         // Similar code also drawing from volatile variables doesn't work if optimization is turned on: currentDrawBuffer will be equal to currentRefreshBuffer and cause a crash from memcpy copying a buffer to itself.  Why?
         memcpy(backgroundBuffers[currentDrawBuffer], backgroundBuffers[currentRefreshBuffer], sizeof(RGB) * (this->matrixWidth * this->matrixHeight));

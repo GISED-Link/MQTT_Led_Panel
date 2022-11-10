@@ -317,10 +317,9 @@ void SmartMatrixHub75Calc<refreshDepth, matrixWidth, matrixHeight, panelType, op
 #ifdef DEBUG_PINS_ENABLED
             gpio_set_level(DEBUG_1_GPIO, 1);
 #endif
-
             long currentMillis = millis();
-            if(currentMillis - lastMillis >= 4500){
-                // sleep a bit to reset the watchdog (default is 5000ms between resets)
+            if(currentMillis - lastMillis >= 9000){
+                // sleep a bit to reset the watchdog (default is 5000ms between resets) (defaults) change to 10s
                 vTaskDelay(1);
                 lastMillis = currentMillis;
             }
