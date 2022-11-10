@@ -85,6 +85,10 @@ extern "C" {
 #define PIN_PHY_POWER GPIO_NUM_12
 #define ETHERNET_MASK_ADDR "255.255.255.00"
 #define ETHERNET_GW_ADDR "169.254.36.255"
+// PANEL LED
+#define MAX_STR_SIZE_MSG 100 
+#define COLOR_SIZE 6 
+#define ERROR_NUMBER_SIZE 5
 //----------------------------------------------------------
 // Structure
 //----------------------------------------------------------

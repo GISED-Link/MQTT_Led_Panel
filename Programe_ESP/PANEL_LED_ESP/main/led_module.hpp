@@ -1,4 +1,3 @@
-
 /**
  * @file LED_module.h
  * MQTT (over TCP)
@@ -18,6 +17,7 @@
 #include "freertos/event_groups.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
+#include "config.h"
 #include <Arduino.h>
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include <stdio.h>
@@ -38,14 +38,23 @@
 #define LAT 4
 #define OE 15
 #define CLK 16
-// MATRIX LILBRARY CONFIG
-#define PANEL_RES_X 32 // Number of pixels wide of each INDIVIDUAL panel module.
-#define PANEL_RES_Y 16 // Number of pixels tall of each INDIVIDUAL panel module.
-#define PANEL_CHAIN 4  // Total number of panels chained one to another
+// MATRIX LILBRARY CONFIG 
+#define COLOR_DEPTH 24 // Choose the color depth used for storing pixels in the layers: 24 or 48
+#define KMATRIX_WIDTH  160 // Pixel number per row 32, 64, 96, 128, 160 (32 per panel)
+#define KMATRIX_HEIGHT 16  // Pixel number per column 
+#define KREFRESH_DEPTH 24  // Refreshrate (fps): 24, 36, 48
+#define KDMA_BUFFER_ROWS 4
+#define DEFAULT_BRIGHTNESS 50 // Brightness max
+#define DEFAULT_SCROLLING_OFFSET_FROM_TOP 1
+#define DEFAULT_SCROLLING_OFFSET_FROM_LEFT 32
+#define SCROLLING_SPEED 47
+#define BLACK {0x00,0x00,0x00}
+#define WHITE {0xff,0xff,0xff}
 /*      PROTOTYPES      */
 void display_logo();
 void config_panel();
-void MatrixText();
-void Display_Task(void *arg);
-void test();
+void MatrixText(String);
+void display_task(void *);
+bool check_protocol(String);
+// void extract_values(String str_error,uint8_t (*)[3], char(*)[ERROR_NUMBER_SIZE], char(*)[MAX_STR_SIZE_MSG]);
 #endif /* MAIN_BUTTON_MODULE_H_ */

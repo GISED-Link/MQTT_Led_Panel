@@ -17,9 +17,9 @@
 #define CONFIG_WITHOUT_POTENTIOMETER 0 //!< config must be =1 if the pcb has no potentiometer connected
 #endif
 /*Tasks parameters*/
-#define DISPLAY_TASK_PRIO 6    //!< the priority of the task that configure the storage with the json file
-#define NVS_RW_TASK_PRIO 5    //!< the priority of the task that configure the storage with the json file
-#define MQTT_TASK_PRIO 1      //!< the priority of the task that manage the communication with the broker mqtt
+#define DISPLAY_TASK_PRIO 1    //!< the priority of the task that configure the storage with the json file
+#define NVS_RW_TASK_PRIO 3    //!< the priority of the task that configure the storage with the json file
+#define MQTT_TASK_PRIO 2      //!< the priority of the task that manage the communication with the broker mqtt
 /**
  * @fn void app_main(void)
  *
@@ -40,7 +40,7 @@ extern "C" void app_main(void)
     config_panel();
     // Task creation
     xTaskCreatePinnedToCore(MQTT_Task, "MQTT_Task", 2048, NULL, MQTT_TASK_PRIO, NULL, tskNO_AFFINITY);
-    xTaskCreatePinnedToCore(Display_Task, "Display_Task", 2048, NULL, DISPLAY_TASK_PRIO, NULL, tskNO_AFFINITY);
+    xTaskCreatePinnedToCore(display_task, "display_task", 2048, NULL, DISPLAY_TASK_PRIO, NULL, tskNO_AFFINITY);
     xTaskCreatePinnedToCore(NVS_RW_task, "NVS_RW_task", 2048, NULL, NVS_RW_TASK_PRIO, NULL, tskNO_AFFINITY);
     while(1)
     {
