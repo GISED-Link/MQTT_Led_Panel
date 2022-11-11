@@ -7,7 +7,6 @@
  */
 #include "mqtt_module.h"
 #include "config.h"
-#include "driver/gpio.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_netif.h"
@@ -23,32 +22,7 @@
 #include "lwip/sockets.h"
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <string.h>
-#define DEBUG 1
-// #define PIN_PHY_POWER GPIO_NUM_12 //!< pin to power on the phy..mac controller of the olimex board
-/*flag interpretation table for the flag coming from mqtt event loop of esp*/
-#define CONECTED_FLAG                                                                                                  \
-    0b00000001 //!< flag that inform that the esp is connected to the broker (receive connect response mqtt message)
-#define DISCONECTED_FLAG                                                                                               \
-    0b00000010 //!< flag that inform that the broker ended the connection properly (receive disconnect mqtt message)
-#define PUBLISHED_FLAG                                                                                                 \
-    0b00000100 //!< flag that inform that the broker received successfully the publish from esp(receive publish ack mqtt
-               //!< message)
-#define SUSCRIBED_FLAG                                                                                                 \
-    0b00001000 //!< flag that inform that the broker received and accept the subscription to a topic from esp(receive
-               //!< subscription ack mqtt message)
-#define UNSUSCRIBED_FLAG                                                                                               \
-    0b00010000 //!< flag that inform that the broker unsubscribed the esp from a specific topic (receive unsubscibe mqtt
-               //!< message)
-#define DATA_FLAG                                                                                                      \
-    0b00100000 //!< flag that inform that the esp ricieved an update on a sbscribed topic from the broker (receive
-               //!< publish message mqtt message from the brocker)
-#define ERROR_FLAG 0b01000000 //!< flag that inform of a known error from mqtt
-#define OTHER_FLAG 0b10000000 //!< flag that inform of any other message comming from the broker
+#define DEBUG 0
 /*---------------------------------------------------------
  * default config of the communication
  -----------------------------------------------------------*/
@@ -59,12 +33,11 @@
 #define USER "pannel1"
 #define PASS "itisnotagoodpasswordbutwhocarehaha1"
 #endif
-static EventGroupHandle_t xMQTTRecieveEventBits;
-EventGroupHandle_t xEvent_data_COM;
-QueueHandle_t xQueue_data_LED_COM;
-// static char topic_led_error[MAX_STR_SIZE];
 #define TOPIC_LED_ERROR "topic/leds_error"
+// static char topic_led_error[MAX_STR_SIZE];
 static const char *TAG = "MQTT_EXAMPLE";
+static EventGroupHandle_t xMQTTRecieveEventBits;
+QueueHandle_t xQueue_data_LED_COM;
 /**
  *  @fn static void log_error_if_nonzero(const char *message, int error_code)
  *
@@ -107,44 +80,37 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 #if DEBUG
             ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
 #endif
-            xEventGroupSetBits(xMQTTRecieveEventBits,   /* The event group being updated. */
-                               CONECTED_FLAG);          /* The bits being set. */
-            xEventGroupClearBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                                 DISCONECTED_FLAG);     /* The bits being reset. */
+            xEventGroupSetBits(xMQTTRecieveEventBits, CONECTED_FLAG);
+            xEventGroupClearBits(xMQTTRecieveEventBits, DISCONECTED_FLAG);
             break;
         case MQTT_EVENT_DISCONNECTED :
 #if DEBUG
             ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED");
 #endif
-            xEventGroupSetBits(xMQTTRecieveEventBits,   /* The event group being updated. */
-                               DISCONECTED_FLAG);       /* The bits being set. */
-            xEventGroupClearBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                                 CONECTED_FLAG);        /* The bits being reset. */
+            xEventGroupSetBits(xMQTTRecieveEventBits, DISCONECTED_FLAG);
+            xEventGroupClearBits(xMQTTRecieveEventBits, CONECTED_FLAG);
+            xEventGroupSetBits(xMQTTRecieveEventBits, UNSUSCRIBED_FLAG);
+            xEventGroupClearBits(xMQTTRecieveEventBits, SUSCRIBED_FLAG);
             break;
         case MQTT_EVENT_SUBSCRIBED :
 #if DEBUG
             ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id);
 #endif
-            xEventGroupSetBits(xMQTTRecieveEventBits,   /* The event group being updated. */
-                               SUSCRIBED_FLAG);         /* The bits being set. */
-            xEventGroupClearBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                                 UNSUSCRIBED_FLAG);     /* The bits being reset. */
+            xEventGroupSetBits(xMQTTRecieveEventBits, SUSCRIBED_FLAG);
+            xEventGroupClearBits(xMQTTRecieveEventBits, UNSUSCRIBED_FLAG);
             break;
         case MQTT_EVENT_UNSUBSCRIBED :
 #if DEBUG
             ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id);
 #endif
-            xEventGroupSetBits(xMQTTRecieveEventBits,   /* The event group being updated. */
-                               UNSUSCRIBED_FLAG);       /* The bits being set. */
-            xEventGroupClearBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                                 SUSCRIBED_FLAG);       /* The bits being reset. */
+            xEventGroupSetBits(xMQTTRecieveEventBits, UNSUSCRIBED_FLAG);
+            xEventGroupClearBits(xMQTTRecieveEventBits, SUSCRIBED_FLAG);
             break;
         case MQTT_EVENT_PUBLISHED :
 #if DEBUG
             ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id);
 #endif
-            xEventGroupSetBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                               PUBLISHED_FLAG);       /* The bits being set. */
+            xEventGroupSetBits(xMQTTRecieveEventBits, PUBLISHED_FLAG);
             break;
         case MQTT_EVENT_DATA :
             {
@@ -153,7 +119,6 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                 printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
                 printf("DATA=%.*s\r\n", event->data_len, event->data);
 #endif
-                printf("test %d \n", strlen(event->data));
                 if(strlen(event->data) <= (MAX_STR_SIZE_MSG + COLOR_SIZE + ERROR_NUMBER_SIZE + 1))
                 {
                     char message[MAX_STR_SIZE_MSG + COLOR_SIZE + ERROR_NUMBER_SIZE + 1] = "";
@@ -173,8 +138,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
                 log_error_if_nonzero("captured as transport's socket errno",
                                      event->error_handle->esp_transport_sock_errno);
                 ESP_LOGI(TAG, "Last errno string (%s)", strerror(event->error_handle->esp_transport_sock_errno));
-                xEventGroupSetBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                                   ERROR_FLAG);           /* The bits being set. */
+                xEventGroupSetBits(xMQTTRecieveEventBits, ERROR_FLAG);
             }
             break;
         default :
@@ -201,9 +165,7 @@ static void mqtt_app_start(void)
     //                           .ip = {""},
     //                           .id = {""},
     //                           .port = 0,
-    //                           .topic_bp = topic_button,
-    //                           .topic_del = topic_led,
-    //                           .topic_pot = topic_potentiometer};
+    //                           .topic_del = topic_led};
     // read_MQTT_config(&Jsoncfng);
     // esp_mqtt_client_config_t mqtt_cfg = {
     //     //.uri = CONFIG_BROKER_URL,
@@ -230,78 +192,27 @@ static void mqtt_app_start(void)
  */
 void MQTT_Task(void *arg)
 {
-    int i = 0;
-    char str[5] = "     ";
-    EventBits_t flag_internal = 0;
-    EventBits_t com_flags = 0;
-    EventBits_t com_flags2 = 0;
-    EventBits_t com_flags3 = 0;
-    BaseType_t que_return_recieve1 = 0;
-    BaseType_t que_return_recieve2 = 0;
-    /*---------------------------------------------------------------------------------------------------------------------------------
-     * In case of deconnexio or communication error Try reconnecting to the mqtt brocker (reintitilyse communication
-     *from scratch)
-     *-----------------------------------------------------------------------------------------------------------------------------------*/
-    com_flags2 = 0;
-    com_flags2 = xEventGroupWaitBits(xMQTTRecieveEventBits, CONECTED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(4000));
-    while((com_flags2 & CONECTED_FLAG) != CONECTED_FLAG)
-    {
-        // MQTT_init();
-        com_flags2 = xEventGroupWaitBits(xMQTTRecieveEventBits, CONECTED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(4000));
-    }
-    /*---------------------------------------------------------------------------------------------------------------------------------
-     * Suscribe to the led topic in the init
-     *-----------------------------------------------------------------------------------------------------------------------------------*/
-    do
-    {
-        int msg_id = esp_mqtt_client_subscribe(client, TOPIC_LED_ERROR, 2);
-#if DEBUG
-        ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
-#endif
-        com_flags2 = xEventGroupWaitBits(xMQTTRecieveEventBits, SUSCRIBED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(200));
-    } while((com_flags2 & SUSCRIBED_FLAG) != SUSCRIBED_FLAG);
-    //---------------------------------------------------------------------------------------------------------------------------------
+    EventBits_t mqtt_flag = 0;
     while(1)
-    { // task loop
-        com_flags = 0;
-        com_flags =
-            xEventGroupWaitBits(xMQTTRecieveEventBits, CONECTED_FLAG | UNSUSCRIBED_FLAG | DISCONECTED_FLAG | ERROR_FLAG,
-                                pdFALSE, pdFALSE, pdMS_TO_TICKS(200));
-        /*---------------------------------------------------------------------------------------------------------------------------------
-         * In case of deconnexio or communication error Try reconnecting to the mqtt brocker (reintitilyse communication
-         *from scratch)
-         *-----------------------------------------------------------------------------------------------------------------------------------*/
-        if((com_flags & DISCONECTED_FLAG) == DISCONECTED_FLAG || (com_flags & ERROR_FLAG) == ERROR_FLAG)
+    {
+        mqtt_flag = xEventGroupWaitBits(xMQTTRecieveEventBits, CONECTED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(4000));
+        while((mqtt_flag & CONECTED_FLAG) != CONECTED_FLAG)
         {
-            xEventGroupClearBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                                 ERROR_FLAG);           /* The bits being reset. */
-            com_flags2 = 0;
-            do
-            {
-                // MQTT_init();
-                com_flags2 =
-                    xEventGroupWaitBits(xMQTTRecieveEventBits, CONECTED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(4000));
-            } while((com_flags2 & CONECTED_FLAG) != CONECTED_FLAG);
+            mqtt_flag =
+                xEventGroupWaitBits(xMQTTRecieveEventBits, CONECTED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(4000));
         }
-        /*---------------------------------------------------------------------------------------------------------------------------------
-         * Resuscribe to the led topic in the init
-         *-----------------------------------------------------------------------------------------------------------------------------------*/
-        if((com_flags & UNSUSCRIBED_FLAG) == UNSUSCRIBED_FLAG)
+        while((mqtt_flag & SUSCRIBED_FLAG) != SUSCRIBED_FLAG)
         {
-            com_flags2 = 0;
-            do
-            {
-                int msg_id = esp_mqtt_client_subscribe(client, TOPIC_LED_ERROR, 2);
+            int msg_id = esp_mqtt_client_subscribe(client, TOPIC_LED_ERROR, 2);
 #if DEBUG
-                ESP_LOGI(TAG, "sent resubscribe successful, msg_id=%d", msg_id);
+            ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 #endif
-                com_flags2 =
-                    xEventGroupWaitBits(xMQTTRecieveEventBits, SUSCRIBED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(200));
-            } while((com_flags2 & SUSCRIBED_FLAG) != SUSCRIBED_FLAG);
+            mqtt_flag =
+                xEventGroupWaitBits(xMQTTRecieveEventBits, SUSCRIBED_FLAG, pdFALSE, pdFALSE, pdMS_TO_TICKS(4000));
         }
         vTaskDelay(pdMS_TO_TICKS(1000));
-    } // endtask loop
-} // end TASK
+    }
+}
 /**
  * @fn void MQTT_init()
  *
@@ -325,8 +236,7 @@ void MQTT_init()
     esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
 #endif
     xMQTTRecieveEventBits = xEventGroupCreate();
-    xEvent_data_COM = xEventGroupCreate();
-    xQueue_data_LED_COM = xQueueCreate(20, sizeof(char[MAX_STR_SIZE_MSG + COLOR_SIZE + ERROR_NUMBER_SIZE + 1]));
+    xQueue_data_LED_COM = xQueueCreate(5, sizeof(char[MAX_STR_SIZE_MSG + COLOR_SIZE + ERROR_NUMBER_SIZE + 1]));
     ESP_ERROR_CHECK(nvs_flash_init());
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());

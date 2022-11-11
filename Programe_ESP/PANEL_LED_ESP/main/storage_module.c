@@ -188,20 +188,10 @@ void read_MQTT_config(MQTT_config_t *ConfigStruct)
                         strlen(cJSON_GetObjectItem(cfng, JSON_CLIENT_ID)->valuestring));
             }
             ConfigStruct->port = cJSON_GetObjectItem(cfng, JSON_PORT)->valueint;
-            if(strlen(cJSON_GetObjectItem(cfng, JSON_TOPIC_BUTTON)->valuestring) < MAX_STR_SIZE)
-            {
-                strncpy(ConfigStruct->topic_bp, cJSON_GetObjectItem(cfng, JSON_TOPIC_BUTTON)->valuestring,
-                        strlen(cJSON_GetObjectItem(cfng, JSON_TOPIC_BUTTON)->valuestring));
-            }
             if(strlen(cJSON_GetObjectItem(cfng, JSON_TOPIC_LED)->valuestring) < MAX_STR_SIZE)
             {
                 strncpy(ConfigStruct->topic_del, cJSON_GetObjectItem(cfng, JSON_TOPIC_LED)->valuestring,
                         strlen(cJSON_GetObjectItem(cfng, JSON_TOPIC_LED)->valuestring));
-            }
-            if(strlen(cJSON_GetObjectItem(cfng, JSON_TOPIC_POTENTIOMETER)->valuestring) < MAX_STR_SIZE)
-            {
-                strncpy(ConfigStruct->topic_pot, cJSON_GetObjectItem(cfng, JSON_TOPIC_POTENTIOMETER)->valuestring,
-                        strlen(cJSON_GetObjectItem(cfng, JSON_TOPIC_POTENTIOMETER)->valuestring));
             }
         }
         cJSON_Delete(config_json);

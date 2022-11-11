@@ -7,9 +7,6 @@
  */
 #ifndef MAIN_CONFIG_H_
 #define MAIN_CONFIG_H_
-#ifdef __cplusplus
-extern "C" {
-#endif
 /*-----------------------------------------------------------------------
  * config file options
  * --------------------------------------------------------------------*/
@@ -86,33 +83,37 @@ extern "C" {
 #define ETHERNET_MASK_ADDR "255.255.255.00"
 #define ETHERNET_GW_ADDR "169.254.36.255"
 // PANEL LED
-#define MAX_STR_SIZE_MSG 100 
-#define COLOR_SIZE 6 
+#define MAX_STR_SIZE_MSG 100
+#define COLOR_SIZE 6
 #define ERROR_NUMBER_SIZE 5
-//----------------------------------------------------------
-// Structure
-//----------------------------------------------------------
-typedef struct MQTT_config_t
+#ifdef __cplusplus
+extern "C"
 {
-    char MQTT_username[MAX_STR_SIZE];
-    char password[MAX_STR_SIZE];
-    char ip[MAX_STR_SIZE];
-    char id[MAX_STR_SIZE];
-    uint16_t port;
-    char *topic_bp;
-    char *topic_del;
-    char *topic_pot;
-} MQTT_config_t;
-//----------------------------------------------------------
-// Prototypes
-//----------------------------------------------------------
-void NVS_RW_task(void *arg);
-void storage_init(void);
-void uart_init_config(void);
-void read_MQTT_config(MQTT_config_t *);
-void read_IP_value(char *, char *, char *);
-void set_static_ip(esp_netif_t *);
-void ethernet_init();
+#endif
+    //----------------------------------------------------------
+    // Structure
+    //----------------------------------------------------------
+    typedef struct MQTT_config_t
+    {
+        char MQTT_username[MAX_STR_SIZE];
+        char password[MAX_STR_SIZE];
+        char ip[MAX_STR_SIZE];
+        char id[MAX_STR_SIZE];
+        uint16_t port;
+        char *topic_bp;
+        char *topic_del;
+        char *topic_pot;
+    } MQTT_config_t;
+    //----------------------------------------------------------
+    // Prototypes
+    //----------------------------------------------------------
+    void set_static_ip(esp_netif_t *);
+    void ethernet_init();
+    void NVS_RW_task(void *arg);
+    void storage_init(void);
+    void uart_init_config(void);
+    void read_MQTT_config(MQTT_config_t *);
+    void read_IP_value(char *, char *, char *);
 #ifdef __cplusplus
 }
 #endif

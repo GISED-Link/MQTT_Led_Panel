@@ -22,7 +22,6 @@
  */
 
 #include <stdlib.h>     
-static const char *TAG1 = "BLOCK_EXAMPLE";
 // call when backgroundBuffers and backgroundColorCorrectionLUT buffer is allocated outside of class
 template <typename RGB, unsigned int optionFlags>
 SMLayerBackground<RGB, optionFlags>::SMLayerBackground(RGB * buffer, uint16_t width, uint16_t height, color_chan_t * colorCorrectionLUT) {

@@ -1,5 +1,5 @@
 /**
- * @file LED_module.h
+ * @file led_module.hpp
  * MQTT (over TCP)
  * @date 01.11.2022
  * Created on: 1 nov 2022
@@ -33,8 +33,8 @@
 #define CH_A 23
 #define CH_B 19
 #define CH_C 5
-#define CH_D -1 // required for 32 rows panels need to route the pins
-#define CH_E -1 // required for 64 rows panels need to route the pins
+#define CH_D -1 // required for 32 rows panels
+#define CH_E -1 // required for 64 rows panels
 #define LAT 4
 #define OE 15
 #define CLK 16
@@ -53,8 +53,8 @@
 /*      PROTOTYPES      */
 void display_logo();
 void config_panel();
-void MatrixText(String);
+void MatrixText(char *);
 void display_task(void *);
-bool check_protocol(String);
-// void extract_values(String str_error,uint8_t (*)[3], char(*)[ERROR_NUMBER_SIZE], char(*)[MAX_STR_SIZE_MSG]);
+bool check_protocol(char *);
+void put_all_led_off();
 #endif /* MAIN_BUTTON_MODULE_H_ */
