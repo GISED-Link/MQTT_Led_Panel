@@ -4,6 +4,7 @@ Created on Wed Nov  9 13:42:20 2022
 
 @author: louis
 """
+import serial.tools.list_ports
 import paho.mqtt.client as mqtt  # import the client1
 import pyads
 import threading
@@ -14,9 +15,12 @@ broker_address = "192.168.90.192"  # addr locale
 topic_pannel_leds = "topic/leds_error"
 user_name = "PyClient2"
 user_pass = "CBPlcbB2046HPLPYWNFT"
-
-
+storage_dic = {}
+watermark_walue = ""
+i = 0
 # prévien lors d'une déconexion
+
+
 def on_disconnect(client, userdata, rc):
     if rc != 0:
         print("Unexpected MQTT disconnection. Will auto-reconnect\n")
@@ -29,7 +33,8 @@ def on_connect(client, userdata, flags, rc):
 
 
 def thread_function(name):
-    i = 0
+    global i
+    global watermark_walue
     while(1):
         # value = input("entrez une commande valide pour l'afficher sur le panel \n")
         # if(value == "quit"):
@@ -44,9 +49,19 @@ def thread_function(name):
         i = i+1
         client.publish(topic_pannel_leds, "000"+str(i % 10)+" 113355"+" " +
                        " TEST long drfdhgvjgdqskbfhdsbfjsbhkqdsbbhdsbk"+"\0", qos=2)
-        # time.sleep(3)
+        # log_val = str(ser.read(30))
+        # x = log_val.find("watermark")
+        # if((watermark_walue != log_val[x+10:x+14]) & (log_val[x+10:x+14] != '')):
+        #     watermark_walue = log_val[x+10:x+14]
+        #     storage_dic[str(i)] = watermark_walue
+        #     print(watermark_walue)
+        # else:
+        #     if(i > 10000):
+        #         client.disconnect()
+        #         break
 
 
+# ser = serial.Serial(port="COM8", baudrate=115200, timeout=0.5)
 client = mqtt.Client("P1")  # create new instance
 client.username_pw_set(user_name, user_pass)
 client.connect(broker_address)  # connect to broker
