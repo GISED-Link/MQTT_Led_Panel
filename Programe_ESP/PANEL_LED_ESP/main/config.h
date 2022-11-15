@@ -7,6 +7,10 @@
  */
 #ifndef MAIN_CONFIG_H_
 #define MAIN_CONFIG_H_
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 /*-----------------------------------------------------------------------
  * config file options
  * --------------------------------------------------------------------*/
@@ -71,9 +75,7 @@
 #define JSON_MASK "mask"
 #define JSON_CLIENT_ID "client_id"
 #define JSON_PORT "broker_port"
-#define JSON_TOPIC_BUTTON "topic0"
-#define JSON_TOPIC_LED "topic1"
-#define JSON_TOPIC_POTENTIOMETER "topic2"
+#define JSON_TOPIC_LED "topic0"
 // NVS TAG
 #define STORAGE_PARTITION "nvs"
 #define SIZE_ITEM "MQTTsize"
@@ -86,10 +88,6 @@
 #define MAX_STR_SIZE_MSG 100
 #define COLOR_SIZE 6
 #define ERROR_NUMBER_SIZE 5
-#ifdef __cplusplus
-extern "C"
-{
-#endif
     //----------------------------------------------------------
     // Structure
     //----------------------------------------------------------
@@ -100,9 +98,7 @@ extern "C"
         char ip[MAX_STR_SIZE];
         char id[MAX_STR_SIZE];
         uint16_t port;
-        char *topic_bp;
         char *topic_del;
-        char *topic_pot;
     } MQTT_config_t;
     //----------------------------------------------------------
     // Prototypes

@@ -2,7 +2,7 @@
  * @file storage_module.c
  * Storage essential data for config via python script
  * @date 28.09.2022
- * Created on: 18 september 2022
+ * Created on: 28 september 2022
  * @author Louis COLIN
  */
 #include "config.h"

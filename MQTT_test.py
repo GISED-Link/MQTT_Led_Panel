@@ -36,29 +36,19 @@ def thread_function(name):
     global i
     global watermark_walue
     while(1):
-        # value = input("entrez une commande valide pour l'afficher sur le panel \n")
-        # if(value == "quit"):
-        #     client.disconnect()
-        #     break
-        # else:
-        #     value = value+'\0'
-        #     client.publish(topic_pannel_leds, value, qos=2)  # publish
-        #     print("publish var=", value)
-        #     value = ""
-        time.sleep(0.5)
-        i = i+1
-        client.publish(topic_pannel_leds, "000"+str(i % 10)+" 113355"+" " +
-                       " TEST long drfdhgvjgdqskbfhdsbfjsbhkqdsbbhdsbk"+"\0", qos=2)
-        # log_val = str(ser.read(30))
-        # x = log_val.find("watermark")
-        # if((watermark_walue != log_val[x+10:x+14]) & (log_val[x+10:x+14] != '')):
-        #     watermark_walue = log_val[x+10:x+14]
-        #     storage_dic[str(i)] = watermark_walue
-        #     print(watermark_walue)
-        # else:
-        #     if(i > 10000):
-        #         client.disconnect()
-        #         break
+        value = input("entrez une commande valide pour l'afficher sur le panel \n")
+        if(value == "quit"):
+            client.disconnect()
+            break
+        else:
+            value = value+'\0'
+            client.publish(topic_pannel_leds, value, qos=2)  # publish
+            print("publish var=", value)
+            value = ""
+        # time.sleep(0.1)
+        # i = i+1
+        # client.publish(topic_pannel_leds, "000"+str(i % 10)+" 113355"+" " +
+        #                " TEST long drfdhgvjgdqskbfhdsbfjsbhkqdsbbhdsbk"+"\0", qos=2)
 
 
 # ser = serial.Serial(port="COM8", baudrate=115200, timeout=0.5)

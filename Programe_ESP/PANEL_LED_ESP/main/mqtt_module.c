@@ -22,19 +22,9 @@
 #include "lwip/sockets.h"
 #include "nvs_flash.h"
 #include "protocol_examples_common.h"
-#define DEBUG 0
-/*---------------------------------------------------------
- * default config of the communication
- -----------------------------------------------------------*/
-#if USE_CONFIGURATIONFILE != 1
-#define topic_potentiometer "topic/potentiometer"
-#define topic_button "topic/buttons"
-#define topic_led "topic/leds"
-#define USER "pannel1"
-#define PASS "itisnotagoodpasswordbutwhocarehaha1"
-#endif
+#define DEBUG 1
 #define TOPIC_LED_ERROR "topic/leds_error"
-// static char topic_led_error[MAX_STR_SIZE];
+static char topic_led_error[MAX_STR_SIZE];
 static const char *TAG = "MQTT_EXAMPLE";
 static EventGroupHandle_t xMQTTRecieveEventBits;
 QueueHandle_t xQueue_data_LED_COM;
@@ -116,8 +106,8 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
             {
 #if DEBUG
                 ESP_LOGI(TAG, "MQTT_EVENT_DATA");
-                printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
-                printf("DATA=%.*s\r\n", event->data_len, event->data);
+                // printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
+                // printf("DATA=%.*s\r\n", event->data_len, event->data);
 #endif
                 if(strlen(event->data) <= (MAX_STR_SIZE_MSG + COLOR_SIZE + ERROR_NUMBER_SIZE + 1))
                 {
@@ -145,8 +135,7 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
 #if DEBUG
             ESP_LOGI(TAG, "Other event id:%d", event->event_id);
 #endif
-            xEventGroupSetBits(xMQTTRecieveEventBits, /* The event group being updated. */
-                               OTHER_FLAG);           /* The bits being set. */
+            xEventGroupSetBits(xMQTTRecieveEventBits, OTHER_FLAG);
             break;
     }
 }
@@ -160,22 +149,18 @@ static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_
  */
 static void mqtt_app_start(void)
 {
-    // MQTT_config_t Jsoncfng = {.MQTT_username = {""},
-    //                           .password = {""},
-    //                           .ip = {""},
-    //                           .id = {""},
-    //                           .port = 0,
-    //                           .topic_del = topic_led};
-    // read_MQTT_config(&Jsoncfng);
-    // esp_mqtt_client_config_t mqtt_cfg = {
-    //     //.uri = CONFIG_BROKER_URL,
-    //     .username = Jsoncfng.MQTT_username, .password = Jsoncfng.password,        .port = Jsoncfng.port,
-    //     .client_id = Jsoncfng.id,           .transport = MQTT_TRANSPORT_OVER_TCP, .host = Jsoncfng.ip};
-    // WIFI CONFIG
+    MQTT_config_t Jsoncfng = {
+        .MQTT_username = {""}, .password = {""}, .ip = {""}, .id = {""}, .port = 0, .topic_del = topic_led_error};
+    read_MQTT_config(&Jsoncfng);
     esp_mqtt_client_config_t mqtt_cfg = {
         //.uri = CONFIG_BROKER_URL,
-        .username = "pannelLED1",  .password = "Test_Panel_LED1",        .port = 1883,
-        .client_id = "Panel_LED1", .transport = MQTT_TRANSPORT_OVER_TCP, .host = "192.168.90.192"};
+        .username = Jsoncfng.MQTT_username, .password = Jsoncfng.password,        .port = Jsoncfng.port,
+        .client_id = Jsoncfng.id,           .transport = MQTT_TRANSPORT_OVER_TCP, .host = Jsoncfng.ip};
+    // WIFI CONFIG
+    // esp_mqtt_client_config_t mqtt_cfg = {
+    //     //.uri = CONFIG_BROKER_URL,
+    //     .username = "pannelLED1",  .password = "Test_Panel_LED1",        .port = 1883,
+    //     .client_id = "Panel_LED1", .transport = MQTT_TRANSPORT_OVER_TCP, .host = "192.168.90.192"};
     client = esp_mqtt_client_init(&mqtt_cfg);
     /* The last argument may be used to pass data to the event handler, in this example mqtt_event_handler */
     esp_mqtt_client_register_event(client, ESP_EVENT_ANY_ID, mqtt_event_handler, NULL);
@@ -203,7 +188,8 @@ void MQTT_Task(void *arg)
         }
         while((mqtt_flag & SUSCRIBED_FLAG) != SUSCRIBED_FLAG)
         {
-            int msg_id = esp_mqtt_client_subscribe(client, TOPIC_LED_ERROR, 2);
+            // int msg_id = esp_mqtt_client_subscribe(client, TOPIC_LED_ERROR, 2);
+            int msg_id = esp_mqtt_client_subscribe(client, topic_led_error, 2);
 #if DEBUG
             ESP_LOGI(TAG, "sent subscribe successful, msg_id=%d", msg_id);
 #endif

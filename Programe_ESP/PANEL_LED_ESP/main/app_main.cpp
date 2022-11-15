@@ -5,7 +5,7 @@
  * Created on: 6 mai 2022
  * @author Thibault Sampiemon
  */
-#include <Arduino.h>
+#include <Arduino.h> // Must call that lib first
 #include <stdbool.h>
 #include "config.h"
 #include "freertos/FreeRTOS.h"
@@ -14,9 +14,9 @@
 #include "mqtt_module.h"
 #include "storage_module.h"
 /*Tasks parameters*/
-#define DISPLAY_TASK_PRIO 1    //!< the priority of the task that configure the storage with the json file
-#define NVS_RW_TASK_PRIO 3    //!< the priority of the task that configure the storage with the json file
-#define MQTT_TASK_PRIO 2      //!< the priority of the task that manage the communication with the broker mqtt
+#define DISPLAY_TASK_PRIO 1 //!< the priority of the task that configure the storage with the json file
+#define NVS_RW_TASK_PRIO 3  //!< the priority of the task that configure the storage with the json file
+#define MQTT_TASK_PRIO 2    //!< the priority of the task that manage the communication with the broker mqtt
 /**
  * @fn void app_main(void)
  *

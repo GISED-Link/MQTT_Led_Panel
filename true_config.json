@@ -1,0 +1,11 @@
+{
+    "pannel_config_args1": {
+        "MQTT_username": "pannelLED1",
+        "password": "Test_Panel_LED1",
+        "broker_ip": "192.168.90.192",
+		"client_ip": "192.168.1.52",
+		"client_id": "Panel_LED1",
+        "broker_port": "1883",
+        "topic0": "topic/leds_error"
+    }
+}

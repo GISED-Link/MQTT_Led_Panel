@@ -208,7 +208,7 @@
     #pragma message "MatrixHardware: ESP32 forum wiring"
 
     // ADDX is output directly using GPIO
-    #define CLKS_DURING_LATCH   0 
+    #define CLKS_DURING_LATCH   0
     #define MATRIX_I2S_MODE I2S_PARALLEL_BITS_16
     #define MATRIX_DATA_STORAGE_TYPE uint16_t
 

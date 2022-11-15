@@ -8,6 +8,7 @@
 #ifndef MAIN_LED_MODULE_H_
 #define MAIN_LED_MODULE_H_
 /*      INCLUDES        */
+#include "config.h"
 #include "driver/gpio.h"
 #include "driver/i2c.h"
 #include "esp_err.h"
@@ -17,7 +18,6 @@
 #include "freertos/event_groups.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
-#include "config.h"
 #include <Arduino.h>
 #include <ESP32-HUB75-MatrixPanel-I2S-DMA.h>
 #include <stdio.h>
@@ -38,18 +38,35 @@
 #define LAT 4
 #define OE 15
 #define CLK 16
-// MATRIX LILBRARY CONFIG 
-#define COLOR_DEPTH 24 // Choose the color depth used for storing pixels in the layers: 24 or 48
-#define KMATRIX_WIDTH  160 // Pixel number per row 32, 64, 96, 128, 160 (32 per panel)
-#define KMATRIX_HEIGHT 16  // Pixel number per column 
-#define KREFRESH_DEPTH 24  // Refreshrate (fps): 24, 36, 48
+// MATRIX LILBRARY CONFIG
+#define COLOR_DEPTH 24    // Choose the color depth used for storing pixels in the layers: 24 or 48
+#define KMATRIX_WIDTH 160 // Pixel number per row 32, 64, 96, 128, 160 (32 per panel)
+#define KMATRIX_HEIGHT 16 // Pixel number per column
+#define KREFRESH_DEPTH 24 // Refreshrate (fps): 24, 36, 48
 #define KDMA_BUFFER_ROWS 4
 #define DEFAULT_BRIGHTNESS 50 // Brightness max
 #define DEFAULT_SCROLLING_OFFSET_FROM_TOP 1
 #define DEFAULT_SCROLLING_OFFSET_FROM_LEFT 32
 #define SCROLLING_SPEED 47
-#define BLACK {0x00,0x00,0x00}
-#define WHITE {0xff,0xff,0xff}
+#define BLACK                                                                                                          \
+    {                                                                                                                  \
+        0x00, 0x00, 0x00                                                                                               \
+    }
+#define WHITE                                                                                                          \
+    {                                                                                                                  \
+        0xff, 0xff, 0xff                                                                                               \
+    }
+enum lines
+{
+    first_row,
+    second_row,
+    third_row,
+    fourth_row,
+    fifth_row,
+    sixth_row,
+    seventh_row,
+    eighth_row
+};
 /*      PROTOTYPES      */
 void display_logo();
 void config_panel();
@@ -57,4 +74,5 @@ void MatrixText(char *);
 void display_task(void *);
 bool check_protocol(char *);
 void put_all_led_off();
+void change_line();
 #endif /* MAIN_BUTTON_MODULE_H_ */
