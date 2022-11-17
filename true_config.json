@@ -6,6 +6,6 @@
 		"client_ip": "192.168.1.52",
 		"client_id": "Panel_LED1",
         "broker_port": "1883",
-        "topic0": "topic/leds_error"
+        "topic0": "topic/pannel_led/leds_error"
     }
 }

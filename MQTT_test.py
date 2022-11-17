@@ -12,7 +12,7 @@ import time
 
 broker_address = "192.168.90.192"  # addr locale
 # def des nom des topics
-topic_pannel_leds = "topic/leds_error"
+topic_pannel_leds = "topic/pannel_led/leds_error"
 user_name = "PyClient2"
 user_pass = "CBPlcbB2046HPLPYWNFT"
 storage_dic = {}

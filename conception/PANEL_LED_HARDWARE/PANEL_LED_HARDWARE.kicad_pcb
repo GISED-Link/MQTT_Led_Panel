@@ -1394,6 +1394,8 @@
       (net 2 "GND") (pintype "passive") (tstamp 6401e3f4-e2b9-4e8d-9f19-80b067ebdac7))
   )
 
+  (gr_circle (center 130.45 51.8) (end 130.65 51.8) (layer "F.SilkS") (width 0.15) (fill solid) (tstamp 306d5f28-cc63-4d25-a8d5-8731d6a52971))
+  (gr_circle (center 129.4 74.9) (end 129.6 74.9) (layer "F.SilkS") (width 0.15) (fill solid) (tstamp 94cc6c9a-812d-4319-9e6f-134774ac1721))
   (gr_rect (start 86.63 45.94) (end 148.86 96.74) (layer "Edge.Cuts") (width 0.2) (fill none) (tstamp 58766d65-19cc-47c0-bd0c-55be7f333906))
 
   (segment (start 139.92 59) (end 143.315 55.605) (width 0.5) (layer "F.Cu") (net 1) (tstamp 05e3fe76-f6e6-40f5-a56d-dd7a0ba43b86))
@@ -1578,7 +1580,6 @@
   (via (at 131.85 49.97) (size 0.8) (drill 0.4) (layers "F.Cu" "B.Cu") (free) (net 26) (tstamp 0eed5158-61b4-480c-8813-8a4b625088ba))
   (via (at 128.72 53.78) (size 0.8) (drill 0.4) (layers "F.Cu" "B.Cu") (net 26) (tstamp d29594b4-3f4f-4588-bc5a-ae0922a616a1))
   (segment (start 128.72 53.78) (end 128.72 53.1) (width 0.25) (layer "B.Cu") (net 26) (tstamp 5f62a5ab-cb38-4437-8fea-cf1eb47eb97a))
-  (segment (start 128.72 53.1) (end 131.85 49.97) (width 0.25) (layer "B.Cu") (net 26) (tstamp 67e75f32-c6cc-4488-a488-3a857c73e5db))
   (segment (start 131.155 73.475) (end 131.135 73.495) (width 0.25) (layer "F.Cu") (net 27) (tstamp 221ecbf9-da0b-4b50-917b-b279cd6ae360))
   (segment (start 133.04 73.475) (end 131.155 73.475) (width 0.25) (layer "F.Cu") (net 27) (tstamp 7906ec78-73de-49c8-8f8e-80487141a391))
   (via (at 127.895 76.865) (size 0.8) (drill 0.4) (layers "F.Cu" "B.Cu") (free) (net 27) (tstamp 0213eef0-eb23-40ed-876b-0503176a07c7))
@@ -7473,7 +7474,7 @@
   (zone (net 0) (net_name "") (layer "B.Cu") (tstamp c361384e-a5e5-4228-989e-5d30056e91d3) (hatch edge 0.508)
     (connect_pads (clearance 0))
     (min_thickness 0.254)
-    (keepout (tracks allowed) (vias allowed) (pads allowed ) (copperpour not_allowed) (footprints allowed))
+    (keepout (tracks allowed) (vias allowed) (pads allowed) (copperpour not_allowed) (footprints allowed))
     (fill (thermal_gap 0.508) (thermal_bridge_width 0.508))
     (polygon
       (pts
