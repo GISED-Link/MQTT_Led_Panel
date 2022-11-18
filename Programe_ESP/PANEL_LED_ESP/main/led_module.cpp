@@ -179,6 +179,7 @@ void display_task(void *arg)
     while(true)
     {
         msg_received = xQueueReceive(xQueue_data_LED_COM, &error, pdMS_TO_TICKS(1000));
+        // change_line();
         if(msg_received)
         {
             K++;
